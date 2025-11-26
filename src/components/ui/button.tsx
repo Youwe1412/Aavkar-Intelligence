@@ -1,9 +1,13 @@
+"use client";
+
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { MotionProps, motion } from "framer-motion";
 
 export interface ButtonProps
-    extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+        MotionProps {
     variant?: "primary" | "secondary" | "outline" | "ghost";
     size?: "sm" | "md" | "lg";
     isLoading?: boolean;
@@ -25,20 +29,23 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         };
 
         return (
-            <button
+            <motion.button
                 className={cn(
                     "inline-flex items-center justify-center rounded-xl font-medium transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none",
                     variants[variant],
                     sizes[size],
                     className
                 )}
+                whileHover={{ y: -1, scale: 1.01 }}
+                whileTap={{ scale: 0.985 }}
+                transition={{ type: "spring", stiffness: 350, damping: 22, mass: 0.4 }}
                 ref={ref}
                 disabled={isLoading || props.disabled}
                 {...props}
             >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {children}
-            </button>
+            </motion.button>
         );
     }
 );

@@ -69,7 +69,7 @@ export function Philosophy() {
 
                 <div className="mt-16 text-center max-w-2xl mx-auto">
                     <p className="text-lg text-slate-400">
-                        We don't just deploy models. We design the <span className="text-white font-medium">specifications</span> and the <span className="text-white font-medium">verification loops</span> so you can trust the system to do real work.
+                        We don’t just deploy models. We design the <span className="text-white font-medium">specifications</span> and the <span className="text-white font-medium">verification loops</span> so you can trust the system to do real work.
                     </p>
                 </div>
             </div>
