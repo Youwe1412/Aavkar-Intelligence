@@ -5,12 +5,41 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { HeroScene } from "@/components/hero/HeroScene";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { useEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
+import { useSmoothScrollContainer } from "@/components/layout/SmoothScrollProvider";
 
 export function Hero() {
+    const sectionRef = useRef<HTMLElement | null>(null);
+    const scroller = useSmoothScrollContainer();
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        if (!sectionRef.current || !scroller) return;
+        gsap.registerPlugin(ScrollTrigger);
+
+        const ctx = gsap.context(() => {
+            ScrollTrigger.create({
+                trigger: sectionRef.current,
+                start: "top top",
+                end: "bottom+=200 top",
+                scroller,
+                scrub: true,
+                onUpdate: (self) => setProgress(self.progress),
+            });
+        }, sectionRef);
+
+        return () => ctx.revert();
+    }, [scroller]);
+
     return (
-        <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <section
+            ref={sectionRef}
+            className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden"
+        >
             {/* 3D Background Scene */}
-            <HeroScene />
+            <HeroScene scrollProgress={progress} />
 
             {/* Gradient Overlay for Text Readability */}
             <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-midnight/50 to-midnight pointer-events-none" />
@@ -22,7 +51,7 @@ export function Hero() {
                     transition={{ duration: 0.8, ease: "easeOut" }}
                     className="max-w-4xl mx-auto"
                 >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-8 backdrop-blur-sm">
+                    <div className="hero-kicker inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-8 backdrop-blur-sm">
                         <span className="flex h-2 w-2 rounded-full bg-electric-teal animate-pulse" />
                         <span className="text-xs font-medium text-slate-300 tracking-wide uppercase">
                             Applied Intelligence by Aavkar
@@ -34,7 +63,7 @@ export function Hero() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-                            className="block"
+                            className="hero-line block"
                         >
                             AI doesn’t create advantage.
                         </motion.span>
@@ -42,7 +71,7 @@ export function Hero() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
-                            className="block"
+                            className="hero-line block"
                         >
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-teal to-blue-violet">
                                 Intelligent humans
@@ -51,11 +80,11 @@ export function Hero() {
                         </motion.span>
                     </h1>
 
-                    <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed drop-shadow-md">
+                    <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed drop-shadow-md" data-animate="fade-up">
                         We design AI-native workflows, copilots, and digital employees for creative, learning, health, and operations teams that want to work smarter, not louder.
                     </p>
 
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <div className="hero-cta flex flex-col sm:flex-row items-center justify-center gap-4">
                         <MagneticButton>
                             <Button size="lg" className="group relative overflow-hidden">
                                 <span className="relative z-10 flex items-center">

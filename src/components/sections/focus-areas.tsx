@@ -6,7 +6,7 @@ import { Wand2, Users } from "lucide-react";
 
 export function FocusAreas() {
     return (
-        <section className="py-24 bg-midnight relative overflow-hidden">
+        <section className="py-24 bg-midnight relative overflow-hidden" data-animate="fade-up">
             <div className="container mx-auto px-6">
                 <div className="text-center mb-20">
                     <span className="text-electric-teal font-medium tracking-wide uppercase text-sm">Active Focus</span>

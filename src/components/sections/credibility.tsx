@@ -24,7 +24,7 @@ const features = [
 
 export function Credibility() {
     return (
-        <section className="py-24 bg-midnight relative overflow-hidden">
+        <section className="py-24 bg-midnight relative overflow-hidden" data-animate="fade-up">
             <div className="container mx-auto px-6">
                 <div className="text-center max-w-3xl mx-auto mb-16">
                     <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-6">

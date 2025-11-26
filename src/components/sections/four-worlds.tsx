@@ -45,7 +45,7 @@ const worlds = [
 
 export function FourWorlds() {
     return (
-        <section className="py-24 bg-midnight-light relative">
+        <section className="py-24 bg-midnight-light relative" data-animate="fade-up" id="services">
             <div className="container mx-auto px-6">
                 <div className="mb-16">
                     <span className="text-electric-teal font-medium tracking-wide uppercase text-sm">The 4 Worlds</span>
@@ -53,7 +53,7 @@ export function FourWorlds() {
                         Domains of Applied Intelligence
                     </h2>
                     <p className="text-slate-400 max-w-2xl text-lg">
-                        We don't offer a fixed menu of services. We explore what becomes possible in these worlds when we apply intelligence well.
+                        We don’t offer a fixed menu of services. We explore what becomes possible in these worlds when we apply intelligence well.
                     </p>
                 </div>
 
@@ -78,7 +78,7 @@ export function FourWorlds() {
 
                                     <h3 className="text-2xl font-bold text-white mb-2">{world.title}</h3>
                                     <h4 className="text-lg font-medium text-white/90 mb-4 italic font-serif">
-                                        "{world.question}"
+                                        “{world.question}”
                                     </h4>
                                     <p className="text-slate-400 leading-relaxed mb-8">
                                         {world.description}

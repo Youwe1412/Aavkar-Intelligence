@@ -9,9 +9,13 @@
  */
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, Stars, Trail } from "@react-three/drei";
-import { useRef, useState } from "react";
+import { Environment, Float, Stars, useGLTF } from "@react-three/drei";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
+
+interface HeroSceneProps {
+    scrollProgress?: number;
+}
 
 function NeuralNode({ position, mouse }: { position: [number, number, number]; mouse: React.MutableRefObject<[number, number]> }) {
     const meshRef = useRef<THREE.Mesh>(null);
@@ -54,31 +58,60 @@ function NeuralNode({ position, mouse }: { position: [number, number, number]; m
     );
 }
 
-function Scene() {
+function TechShard({ progress }: { progress?: number }) {
+    const { scene } = useGLTF("/models/tech-orb.gltf");
+    const shardRef = useRef<THREE.Group>(null);
+
+    useFrame((state, delta) => {
+        if (!shardRef.current) return;
+        const rotationOffset = (progress ?? 0) * Math.PI * 2;
+        shardRef.current.rotation.y += delta * 0.35 + rotationOffset * 0.05;
+        shardRef.current.rotation.x = THREE.MathUtils.lerp(
+            shardRef.current.rotation.x,
+            0.3 + rotationOffset * 0.2,
+            0.08
+        );
+    });
+
+    const clonedScene = useMemo(() => scene.clone(true), [scene]);
+
+    return (
+        <group ref={shardRef} scale={1.8} position={[0, 0, -2]}>
+            <primitive object={clonedScene} />
+            <mesh rotation={[Math.PI / 2, 0, 0]}>
+                <torusGeometry args={[2, 0.02, 16, 100]} />
+                <meshBasicMaterial color="#2DD4BF" transparent opacity={0.2} />
+            </mesh>
+        </group>
+    );
+}
+
+function Scene({ progress }: HeroSceneProps) {
     const mouse = useRef<[number, number]>([0, 0]);
 
-    // Update mouse position for parallax
-    const handleMouseMove = (event: MouseEvent) => {
-        mouse.current = [
-            (event.clientX / window.innerWidth) * 2 - 1,
-            -(event.clientY / window.innerHeight) * 2 + 1,
-        ];
-    };
+    useEffect(() => {
+        const handleMouseMove = (event: MouseEvent) => {
+            mouse.current = [
+                (event.clientX / window.innerWidth) * 2 - 1,
+                -(event.clientY / window.innerHeight) * 2 + 1,
+            ];
+        };
 
-    // Attach listener to window
-    if (typeof window !== "undefined") {
         window.addEventListener("mousemove", handleMouseMove);
-    }
+        return () => window.removeEventListener("mousemove", handleMouseMove);
+    }, []);
 
     return (
         <>
-            <ambientLight intensity={0.5} />
+            <ambientLight intensity={0.4} />
             <pointLight position={[10, 10, 10]} intensity={1} color="#2DD4BF" />
-            <pointLight position={[-10, -10, -10]} intensity={0.5} color="#818CF8" />
+            <pointLight position={[-10, -10, -10]} intensity={0.4} color="#818CF8" />
+            <Environment preset="city" />
 
-            <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+            <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
 
-            {/* Central "Neural" Cluster */}
+            <TechShard progress={progress} />
+
             <group>
                 <NeuralNode position={[0, 0, 0]} mouse={mouse} />
                 <NeuralNode position={[-2, 1, -2]} mouse={mouse} />
@@ -87,18 +120,19 @@ function Scene() {
                 <NeuralNode position={[0, -2, -3]} mouse={mouse} />
             </group>
 
-            {/* Fog for depth */}
             <fog attach="fog" args={["#02040A", 5, 20]} />
         </>
     );
 }
 
-export function HeroScene() {
+export function HeroScene({ scrollProgress }: HeroSceneProps) {
     return (
         <div className="absolute inset-0 z-0 opacity-60">
             <Canvas camera={{ position: [0, 0, 5], fov: 60 }} dpr={[1, 2]}>
-                <Scene />
+                <Scene progress={scrollProgress} />
             </Canvas>
         </div>
     );
 }
+
+useGLTF.preload("/models/tech-orb.gltf");

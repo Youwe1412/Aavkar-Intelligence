@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { FluidBackground } from "@/components/interactive/FluidBackground";
+import { SmoothScrollProvider } from "@/components/layout/SmoothScrollProvider";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -31,7 +32,7 @@ export default function RootLayout({
         <FluidBackground />
         <div className="grain-overlay" />
         <div className="vignette-overlay" />
-        {children}
+        <SmoothScrollProvider>{children}</SmoothScrollProvider>
       </body>
     </html>
   );

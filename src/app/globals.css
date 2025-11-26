@@ -47,3 +47,10 @@ h6 {
   z-index: 9999;
   background: radial-gradient(circle at center, transparent 0%, rgba(2, 4, 10, 0.4) 100%);
 }
+
+.smooth-scroll-container {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  will-change: transform;
+}

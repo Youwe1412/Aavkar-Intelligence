@@ -8,26 +8,28 @@ import { Philosophy } from "@/components/sections/philosophy";
 import { About } from "@/components/sections/about";
 import { Process } from "@/components/sections/process";
 import { CTA } from "@/components/sections/cta";
+import { ScrollOrchestrator } from "@/components/animations/ScrollOrchestrator";
+import { ChatWidget } from "@/components/interactive/ChatWidget";
+import { PersonalizationBanner } from "@/components/sections/personalization-banner";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-midnight text-white selection:bg-electric-teal/30">
+      <ScrollOrchestrator />
       <Navbar />
       <Hero />
       <Credibility />
-      <div id="services">
-        <FourWorlds />
-      </div>
+      <FourWorlds />
+      <PersonalizationBanner />
       <div id="approach">
         <FocusAreas />
         <Philosophy />
       </div>
-      <div id="about">
-        <About />
-      </div>
+      <About />
       <Process />
       <CTA />
       <Footer />
+      <ChatWidget />
     </main>
   );
 }
