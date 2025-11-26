@@ -62,7 +62,7 @@ export function Process() {
             );
 
             // Animate each step
-            stepsRef.current.forEach((step, index) => {
+            stepsRef.current.forEach((step) => {
                 if (!step) return;
 
                 gsap.fromTo(
@@ -88,7 +88,7 @@ export function Process() {
     }, []);
 
     return (
-        <section ref={containerRef} className="py-32 bg-midnight-light relative overflow-hidden">
+        <section ref={containerRef} className="py-32 bg-midnight-light relative overflow-hidden" data-animate="fade-up">
             <div className="container mx-auto px-6">
                 <div className="text-center mb-24">
                     <span className="text-electric-teal font-medium tracking-wide uppercase text-sm">How We Work</span>

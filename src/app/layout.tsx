@@ -1,17 +1,7 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { FluidBackground } from "@/components/interactive/FluidBackground";
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-serif",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+import { SmoothScrollProvider } from "@/components/layout/SmoothScrollProvider";
 
 export const metadata: Metadata = {
   title: "Applied Intelligence by Aavkar",
@@ -25,13 +15,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${playfair.variable} ${inter.variable} antialiased bg-midnight text-white`}
-      >
+      <body className="antialiased bg-midnight text-white font-sans">
         <FluidBackground />
         <div className="grain-overlay" />
         <div className="vignette-overlay" />
-        {children}
+        <SmoothScrollProvider>{children}</SmoothScrollProvider>
       </body>
     </html>
   );

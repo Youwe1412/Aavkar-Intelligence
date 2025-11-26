@@ -1,10 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-
 export function About() {
     return (
-        <section className="py-24 bg-midnight relative overflow-hidden">
+        <section className="py-24 bg-midnight relative overflow-hidden" data-animate="fade-up" id="about">
             <div className="container mx-auto px-6">
                 <div className="max-w-4xl mx-auto">
                     <div className="mb-12">
@@ -31,13 +29,13 @@ export function About() {
                             <div className="p-6 border-l-2 border-blue-violet/30 bg-white/5 rounded-r-xl">
                                 <h4 className="text-lg font-bold text-white mb-2">The Approach</h4>
                                 <p className="text-slate-400 text-base">
-                                    We believe AI shouldn't replace human judgement. It should liberate it.
+                                    We believe AI shouldn’t replace human judgement. It should liberate it.
                                 </p>
                             </div>
                         </div>
 
                         <p className="text-slate-400">
-                            We saw that most "AI agencies" were just wrapping generic tools. We wanted to build systems that actually understand the context of the work, whether that's editing a film, training a new hire, or teaching a student. That requires more than just code; it requires a deep respect for the human craft.
+                            We saw that most “AI agencies” were just wrapping generic tools. We wanted to build systems that actually understand the context of the work, whether that’s editing a film, training a new hire, or teaching a student. That requires more than just code; it requires a deep respect for the human craft.
                         </p>
                     </div>
                 </div>

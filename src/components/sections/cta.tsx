@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export function CTA() {
     return (
-        <section className="py-32 bg-midnight relative overflow-hidden">
+        <section className="py-32 bg-midnight relative overflow-hidden" data-animate="fade-up">
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-electric-teal/5" />
 
             <div className="container mx-auto px-6 relative z-10 text-center">
