@@ -7,6 +7,18 @@ export function CTA() {
     return (
         <section className="py-32 bg-midnight relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-b from-transparent to-electric-teal/5" />
+            <motion.div
+                aria-hidden
+                className="absolute -left-24 top-0 h-72 w-72 rounded-full bg-electric-teal/10 blur-3xl"
+                animate={{ scale: [0.9, 1.1, 0.95], opacity: [0.4, 0.7, 0.5] }}
+                transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
+            />
+            <motion.div
+                aria-hidden
+                className="absolute -right-20 bottom-10 h-64 w-64 rounded-full bg-blue-violet/20 blur-3xl"
+                animate={{ scale: [1, 1.08, 0.98], opacity: [0.3, 0.55, 0.35] }}
+                transition={{ repeat: Infinity, duration: 9, ease: "easeInOut" }}
+            />
 
             <div className="container mx-auto px-6 relative z-10 text-center">
                 <motion.div

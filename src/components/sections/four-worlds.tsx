@@ -43,29 +43,41 @@ const worlds = [
     },
 ];
 
+const cardVariants = {
+    hidden: { opacity: 0, y: 24 },
+    show: { opacity: 1, y: 0 },
+};
+
 export function FourWorlds() {
     return (
         <section className="py-24 bg-midnight-light relative">
             <div className="container mx-auto px-6">
-                <div className="mb-16">
+                <motion.div
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.45 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="mb-16"
+                >
                     <span className="text-electric-teal font-medium tracking-wide uppercase text-sm">The 4 Worlds</span>
                     <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mt-4 mb-6">
                         Domains of Applied Intelligence
                     </h2>
-                    <p className="text-slate-400 max-w-2xl text-lg">
-                        We don't offer a fixed menu of services. We explore what becomes possible in these worlds when we apply intelligence well.
+                    <p className="text-slate-300 max-w-2xl text-lg leading-relaxed">
+                        We don’t offer a fixed menu of services. We explore what becomes possible in these worlds when we apply intelligence well.
                     </p>
-                </div>
+                </motion.div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                     {worlds.map((world, index) => (
                         <motion.div
                             key={index}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
-                            whileHover={{ y: -5, scale: 1.02 }}
+                            variants={cardVariants}
+                            initial="hidden"
+                            whileInView="show"
+                            viewport={{ once: true, amount: 0.3 }}
+                            transition={{ delay: index * 0.12, duration: 0.65, ease: "easeOut" }}
+                            whileHover={{ y: -5, scale: 1.015 }}
                         >
                             <Card className="h-full group relative overflow-hidden border-white/5 bg-midnight hover:border-white/20 transition-colors duration-500">
                                 {/* Hover Gradient Background */}
@@ -78,7 +90,7 @@ export function FourWorlds() {
 
                                     <h3 className="text-2xl font-bold text-white mb-2">{world.title}</h3>
                                     <h4 className="text-lg font-medium text-white/90 mb-4 italic font-serif">
-                                        "{world.question}"
+                                        &ldquo;{world.question}&rdquo;
                                     </h4>
                                     <p className="text-slate-400 leading-relaxed mb-8">
                                         {world.description}

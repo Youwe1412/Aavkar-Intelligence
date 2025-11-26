@@ -8,15 +8,21 @@ export function FocusAreas() {
     return (
         <section className="py-24 bg-midnight relative overflow-hidden">
             <div className="container mx-auto px-6">
-                <div className="text-center mb-20">
+                <motion.div
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.45 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="text-center mb-20"
+                >
                     <span className="text-electric-teal font-medium tracking-wide uppercase text-sm">Active Focus</span>
                     <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mt-4">
                         Where we are building today
                     </h2>
-                    <p className="text-slate-500 mt-4 text-sm uppercase tracking-wider">
+                    <p className="text-slate-400 mt-4 text-sm uppercase tracking-wider leading-relaxed">
                         RIGHT NOW WE ARE APPLYING OUR AI STACK FIRST IN CLIENT-FACING MEDIA WORK FOR FILMS, CAMPAIGNS, AND YOUTUBE. IN PARALLEL WE ARE EXPLORING HOW THE SAME APPROACH CAN EXTEND INTO EDUCATION, HEALTHCARE, FITNESS, AND OPERATIONS.
                     </p>
-                </div>
+                </motion.div>
 
                 <div className="space-y-24">
                     {/* Area 1: Media */}
@@ -47,22 +53,34 @@ export function FocusAreas() {
                             </ul>
                             <Button variant="outline">Explore Creative AI with Us</Button>
                         </motion.div>
-                        <div className="order-1 md:order-2 relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-pink-900/20 to-midnight-light border border-white/10">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.96 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true, amount: 0.4 }}
+                            transition={{ duration: 0.7, ease: "easeOut" }}
+                            className="order-1 md:order-2 relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-pink-900/20 to-midnight-light border border-white/10"
+                        >
                             <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <span className="text-pink-500/20 font-serif text-6xl font-bold">Workbench</span>
                             </div>
-                        </div>
+                        </motion.div>
                     </div>
 
                     {/* Area 2: Operations */}
                     <div className="grid md:grid-cols-2 gap-12 items-center">
-                        <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-blue-900/20 to-midnight-light border border-white/10">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.96 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true, amount: 0.45 }}
+                            transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
+                            className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-blue-900/20 to-midnight-light border border-white/10"
+                        >
                             <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <span className="text-blue-500/20 font-serif text-6xl font-bold">Frontline</span>
                             </div>
-                        </div>
+                        </motion.div>
                         <motion.div
                             initial={{ opacity: 0, x: 50 }}
                             whileInView={{ opacity: 1, x: 0 }}

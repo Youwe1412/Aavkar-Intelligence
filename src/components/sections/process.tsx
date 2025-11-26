@@ -62,7 +62,7 @@ export function Process() {
             );
 
             // Animate each step
-            stepsRef.current.forEach((step, index) => {
+            stepsRef.current.forEach((step) => {
                 if (!step) return;
 
                 gsap.fromTo(

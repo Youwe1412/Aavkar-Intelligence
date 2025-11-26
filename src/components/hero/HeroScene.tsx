@@ -9,8 +9,8 @@
  */
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, Stars, Trail } from "@react-three/drei";
-import { useRef, useState } from "react";
+import { Float, Stars } from "@react-three/drei";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 
 function NeuralNode({ position, mouse }: { position: [number, number, number]; mouse: React.MutableRefObject<[number, number]> }) {
@@ -57,18 +57,17 @@ function NeuralNode({ position, mouse }: { position: [number, number, number]; m
 function Scene() {
     const mouse = useRef<[number, number]>([0, 0]);
 
-    // Update mouse position for parallax
-    const handleMouseMove = (event: MouseEvent) => {
-        mouse.current = [
-            (event.clientX / window.innerWidth) * 2 - 1,
-            -(event.clientY / window.innerHeight) * 2 + 1,
-        ];
-    };
+    useEffect(() => {
+        const handleMouseMove = (event: MouseEvent) => {
+            mouse.current = [
+                (event.clientX / window.innerWidth) * 2 - 1,
+                -(event.clientY / window.innerHeight) * 2 + 1,
+            ];
+        };
 
-    // Attach listener to window
-    if (typeof window !== "undefined") {
         window.addEventListener("mousemove", handleMouseMove);
-    }
+        return () => window.removeEventListener("mousemove", handleMouseMove);
+    }, []);
 
     return (
         <>
