@@ -86,7 +86,7 @@ function TechShard({ progress }: { progress?: number }) {
     );
 }
 
-function Scene({ progress }: HeroSceneProps) {
+function Scene({ progress }: { progress?: number }) {
     const mouse = useRef<[number, number]>([0, 0]);
 
     useEffect(() => {
