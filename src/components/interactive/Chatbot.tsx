@@ -7,28 +7,19 @@ import { MessageCircle, X, Send, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import { useUIStore } from "@/store/uiStore";
+
 
 export function Chatbot() {
     const [isOpen, setIsOpen] = useState(false);
     const { messages, input, handleInputChange, handleSubmit, isLoading, append } = useChat();
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const scrollProgress = useUIStore((state) => state.scrollProgress);
-    const [hasTriggered, setHasTriggered] = useState(false);
+
 
     useEffect(() => {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [messages]);
-
-    // useEffect(() => {
-    //     if (scrollProgress > 0.7 && !hasTriggered && messages.length === 0) {
-    //         setHasTriggered(true);
-    //         setIsOpen(true);
-    //         append({ role: 'assistant', content: "I noticed you're exploring our approach. Is there a specific domain (Media, Education, Health, Ops) you'd like to dive deeper into?" });
-    //     }
-    // }, [scrollProgress, hasTriggered, messages.length, append]);
 
     return (
         <>
@@ -60,7 +51,7 @@ export function Chatbot() {
                                     <p className="text-sm">How can I help you explore Aavkar Intelligence?</p>
                                 </div>
                             )}
-                            {messages.map((m: any) => (
+                            {messages.map((m) => (
                                 <div
                                     key={m.id}
                                     className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}

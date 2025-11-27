@@ -15,5 +15,7 @@ export const useUIStore = create<UIState>((set) => ({
     hoveredDomain: null,
     setHoveredDomain: (domain) => set({ hoveredDomain: domain }),
     scrollProgress: 0,
+    // CAUTION: This is updated on every scroll frame. Only subscribe to this if absolutely necessary.
+    // Consider using useStore.getState().scrollProgress for non-reactive reads.
     setScrollProgress: (progress) => set({ scrollProgress: progress }),
 }));

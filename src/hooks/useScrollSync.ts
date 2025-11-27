@@ -27,13 +27,15 @@ export const useScrollSync = (containerRef: React.RefObject<HTMLElement | null>,
 
         gsap.registerPlugin(ScrollTrigger);
 
+        let locoScroll: any = null;
+
         // Dynamic import LocomotiveScroll to avoid SSR issues
         import('locomotive-scroll').then((LocomotiveScrollModule) => {
             const LocomotiveScroll = LocomotiveScrollModule.default;
             const scrollEl = containerRef.current;
             if (!scrollEl) return;
 
-            const locoScroll = new LocomotiveScroll({
+            locoScroll = new LocomotiveScroll({
                 el: scrollEl,
                 smooth: true,
                 multiplier: 1,
@@ -63,6 +65,9 @@ export const useScrollSync = (containerRef: React.RefObject<HTMLElement | null>,
             // Update ScrollTrigger on Locomotive Scroll update
             locoScroll.on('scroll', (args: any) => {
                 ScrollTrigger.update();
+                // Performance optimization: Only update store if value changed significantly or throttle it
+                // For now, we keep it but be aware of the cost.
+                // Ideally, we should use a transient update or check if listeners exist.
                 if (args.limit.y > 0) {
                     const progress = args.scroll.y / args.limit.y;
                     useUIStore.getState().setScrollProgress(progress);
@@ -75,11 +80,15 @@ export const useScrollSync = (containerRef: React.RefObject<HTMLElement | null>,
         });
 
         return () => {
-            if (scrollRef.current) {
-                ScrollTrigger.removeEventListener('refresh', () => { scrollRef.current?.update(); });
-                scrollRef.current.destroy();
+            if (locoScroll) {
+                ScrollTrigger.removeEventListener('refresh', () => { locoScroll.update(); });
+                locoScroll.destroy();
+                locoScroll = null;
                 scrollRef.current = null;
             }
+            // Kill all ScrollTriggers created by this component to avoid memory leaks
+            ScrollTrigger.getAll().forEach(t => t.kill());
+            ScrollTrigger.clearScrollMemory();
         };
     }, [containerRef, options]);
 

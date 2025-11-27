@@ -7,7 +7,7 @@ import "locomotive-scroll/dist/locomotive-scroll.css";
 export function SmoothScrollWrapper({ children }: { children: React.ReactNode }) {
     const containerRef = useRef<HTMLDivElement>(null);
 
-    useScrollSync(containerRef, {
+    const options = {
         smooth: true,
         multiplier: 1,
         smartphone: {
@@ -17,7 +17,9 @@ export function SmoothScrollWrapper({ children }: { children: React.ReactNode })
             smooth: true,
             breakpoint: 1024,
         },
-    });
+    };
+
+    useScrollSync(containerRef, options);
 
     return (
         <div ref={containerRef} data-scroll-container className="min-h-screen flex flex-col">
