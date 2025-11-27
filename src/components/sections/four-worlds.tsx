@@ -108,7 +108,7 @@ export function FourWorlds() {
                             {/* Animated Border Gradient */}
                             <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 group-hover:animate-border-spin bg-[length:200%_200%]" />
 
-                            <Card className="h-full relative overflow-hidden border-white/5 bg-midnight/80 backdrop-blur-md hover:border-white/20 transition-colors duration-500 z-10">
+                            <Card className="h-full relative overflow-hidden border-white/10 bg-midnight/80 backdrop-blur-md hover:border-indigo-500/100 transition-colors duration-500 z-10">
                                 {/* Hover Gradient Background */}
                                 <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 bg-gradient-to-br ${world.gradient}`} />
 

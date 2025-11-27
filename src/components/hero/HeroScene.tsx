@@ -1,36 +1,63 @@
 "use client";
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, MeshDistortMaterial, Sphere, Stars, Environment } from "@react-three/drei";
-import { useRef, useState } from "react";
+import { Stars, Environment } from "@react-three/drei";
+import { useRef, useMemo } from "react";
 import * as THREE from "three";
 
-function FluidSphere() {
-    const meshRef = useRef<THREE.Mesh>(null);
-    const [hovered, setHover] = useState(false);
+function ParticleNetwork() {
+    const pointsRef = useRef<THREE.Points>(null);
+
+    // Create 2000 random points inside a sphere
+    const particlesPosition = useMemo(() => {
+        const count = 2000;
+        const positions = new Float32Array(count * 3);
+
+        for (let i = 0; i < count; i++) {
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos((Math.random() * 2) - 1);
+            const r = Math.cbrt(Math.random()) * 2; // Radius ~2
+
+            const x = r * Math.sin(phi) * Math.cos(theta);
+            const y = r * Math.sin(phi) * Math.sin(theta);
+            const z = r * Math.cos(phi);
+
+            positions[i * 3] = x;
+            positions[i * 3 + 1] = y;
+            positions[i * 3 + 2] = z;
+        }
+
+        return positions;
+    }, []);
 
     useFrame((state) => {
-        if (!meshRef.current) return;
+        if (!pointsRef.current) return;
         const t = state.clock.getElapsedTime();
-        meshRef.current.rotation.x = t * 0.2;
-        meshRef.current.rotation.y = t * 0.3;
-
-        // Mouse interaction could go here
+        // Slow galaxy rotation
+        pointsRef.current.rotation.y = t * 0.05;
+        pointsRef.current.rotation.x = t * 0.02;
     });
 
     return (
-        <Float speed={2} rotationIntensity={1.5} floatIntensity={2}>
-            <Sphere args={[1.5, 64, 64]} ref={meshRef} onPointerOver={() => setHover(true)} onPointerOut={() => setHover(false)}>
-                <MeshDistortMaterial
-                    color={hovered ? "#2DD4BF" : "#4338ca"}
-                    attach="material"
-                    distort={0.5} // Strength, 0 disables the effect (default=1)
-                    speed={2} // Speed (default=1)
-                    roughness={0.2}
-                    metalness={0.8}
+        <points ref={pointsRef}>
+            <bufferGeometry>
+                <bufferAttribute
+                    attach="attributes-position"
+                    count={particlesPosition.length / 3}
+                    array={particlesPosition}
+                    itemSize={3}
+                    args={[particlesPosition, 3]}
                 />
-            </Sphere>
-        </Float>
+            </bufferGeometry>
+            <pointsMaterial
+                size={0.02}
+                color="#4F46E5" // Indigo
+                transparent
+                opacity={0.8}
+                sizeAttenuation={true}
+                depthWrite={false}
+            />
+        </points>
     );
 }
 
@@ -43,7 +70,7 @@ function Scene() {
 
             <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
 
-            <FluidSphere />
+            <ParticleNetwork />
 
             <Environment preset="city" />
 
@@ -55,7 +82,7 @@ function Scene() {
 
 export function HeroScene() {
     return (
-        <div className="absolute inset-0 z-0 opacity-80">
+        <div className="absolute inset-0 z-0 opacity-80 pointer-events-none">
             <Canvas camera={{ position: [0, 0, 6], fov: 45 }} dpr={[1, 2]}>
                 <Scene />
             </Canvas>
