@@ -59,7 +59,6 @@ export function Process() {
                         start: "top center",
                         end: "bottom center",
                         scrub: 0.5,
-                        scroller: "[data-scroll-container]",
                     },
                 }
             );
@@ -81,7 +80,6 @@ export function Process() {
                             start: "top center+=100",
                             end: "bottom center-=100",
                             toggleActions: "play reverse play reverse",
-                            scroller: "[data-scroll-container]",
                         },
                     }
                 );

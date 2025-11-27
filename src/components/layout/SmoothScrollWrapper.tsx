@@ -28,7 +28,7 @@ export function SmoothScrollWrapper({ children }: { children: React.ReactNode })
     // useScrollSync(containerRef, options);
 
     return (
-        <div ref={containerRef} data-scroll-container className="h-screen w-full overflow-y-auto overflow-x-hidden">
+        <div ref={containerRef} data-scroll-container className="min-h-screen flex flex-col">
             {children}
         </div>
     );

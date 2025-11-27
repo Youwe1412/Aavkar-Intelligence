@@ -77,7 +77,6 @@ export function FourWorlds() {
                             trigger: card,
                             start: "top bottom-=100",
                             toggleActions: "play none none reverse",
-                            scroller: "[data-scroll-container]",
                         }
                     }
                 );

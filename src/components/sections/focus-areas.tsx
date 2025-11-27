@@ -31,7 +31,6 @@ export function FocusAreas() {
                         trigger: section1Ref.current,
                         start: "top bottom-=100",
                         toggleActions: "play none none reverse",
-                        scroller: "[data-scroll-container]",
                     }
                 }
             );
@@ -47,7 +46,6 @@ export function FocusAreas() {
                         trigger: section2Ref.current,
                         start: "top bottom-=100",
                         toggleActions: "play none none reverse",
-                        scroller: "[data-scroll-container]",
                     }
                 }
             );
