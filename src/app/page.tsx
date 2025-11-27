@@ -8,6 +8,8 @@ import { About } from "@/components/sections/about";
 import { Process } from "@/components/sections/process";
 import { CTA } from "@/components/sections/cta";
 
+
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-midnight text-white selection:bg-electric-teal/30">
@@ -16,10 +18,12 @@ export default function Home() {
       <div id="services">
         <FourWorlds />
       </div>
+
       <div id="approach">
         <FocusAreas />
         <Philosophy />
       </div>
+
       <div id="about">
         <About />
       </div>

@@ -26,6 +26,13 @@ body {
   background-color: var(--color-midnight);
   color: #ffffff;
   font-family: var(--font-sans);
+  cursor: none;
+}
+
+a,
+button,
+[role="button"] {
+  cursor: none;
 }
 
 h1,

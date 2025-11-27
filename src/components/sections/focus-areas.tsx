@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { MagneticButton, HoloBox } from "@/components/ui/InteractiveKit";
 import { Wand2, Users } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -89,24 +90,28 @@ export function FocusAreas() {
                                     </li>
                                 ))}
                             </ul>
-                            <Button variant="outline">Explore Creative AI with Us</Button>
+                            <MagneticButton>
+                                <Button variant="outline">Explore Creative AI with Us</Button>
+                            </MagneticButton>
                         </div>
-                        <div className="order-1 md:order-2 relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-pink-900/20 to-midnight-light border border-white/10 group">
+
+                        <HoloBox className="order-1 md:order-2 relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-pink-900/20 to-midnight-light border border-white/10 group">
                             <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <span className="text-pink-500/20 font-serif text-6xl font-bold group-hover:scale-110 transition-transform duration-700">Workbench</span>
                             </div>
-                        </div>
+                        </HoloBox>
                     </div>
 
                     {/* Area 2: Operations */}
                     <div className="grid md:grid-cols-2 gap-12 items-center">
-                        <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-blue-900/20 to-midnight-light border border-white/10 group">
+                        <HoloBox className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-blue-900/20 to-midnight-light border border-white/10 group">
                             <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <span className="text-blue-500/20 font-serif text-6xl font-bold group-hover:scale-110 transition-transform duration-700">Frontline</span>
                             </div>
-                        </div>
+                        </HoloBox>
+
                         <div ref={section2Ref}>
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-medium mb-6">
                                 <Users className="h-3 w-3" />
@@ -126,7 +131,9 @@ export function FocusAreas() {
                                     </li>
                                 ))}
                             </ul>
-                            <Button variant="outline">Explore Ops Possibilities</Button>
+                            <MagneticButton>
+                                <Button variant="outline">Explore Ops Possibilities</Button>
+                            </MagneticButton>
                         </div>
                     </div>
                 </div>

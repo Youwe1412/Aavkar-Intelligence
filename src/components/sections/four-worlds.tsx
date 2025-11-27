@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Card } from "@/components/ui/card";
+import { TiltCard } from "@/components/ui/TiltCard";
 import { Clapperboard, Building2, GraduationCap, HeartPulse } from "lucide-react";
 import { useUIStore } from "@/store/uiStore";
 import gsap from "gsap";
@@ -108,14 +108,8 @@ export function FourWorlds() {
                             onMouseLeave={() => setHoveredDomain(null)}
                             className="group relative"
                         >
-                            {/* Animated Border Gradient */}
-                            <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 group-hover:animate-border-spin bg-[length:200%_200%]" />
-
-                            <Card className="h-full relative overflow-hidden border-white/10 bg-midnight/80 backdrop-blur-md hover:border-indigo-500/100 transition-colors duration-500 z-10">
-                                {/* Hover Gradient Background */}
-                                <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 bg-gradient-to-br ${world.gradient}`} />
-
-                                <div className="relative z-10 p-6">
+                            <TiltCard className="h-full" spotlightColor="rgba(129, 140, 248, 0.15)">
+                                <div className="relative z-10 p-6 h-full flex flex-col">
                                     <div className={`h-14 w-14 rounded-xl bg-white/5 flex items-center justify-center mb-8 transition-colors duration-300 ${world.bg}`}>
                                         <world.icon className={`h-7 w-7 ${world.color}`} />
                                     </div>
@@ -124,15 +118,15 @@ export function FourWorlds() {
                                     <h4 className="text-lg font-medium text-white/90 mb-4 italic font-serif">
                                         &quot;{world.question}&quot;
                                     </h4>
-                                    <p className="text-slate-400 leading-relaxed mb-8">
+                                    <p className="text-slate-400 leading-relaxed mb-8 flex-grow">
                                         {world.description}
                                     </p>
 
-                                    <div className="flex items-center text-sm font-medium text-slate-500 group-hover:text-white transition-colors">
+                                    <div className="flex items-center text-sm font-medium text-slate-500 group-hover:text-white transition-colors mt-auto">
                                         Explore possibilities <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
                                     </div>
                                 </div>
-                            </Card>
+                            </TiltCard>
                         </div>
                     ))}
                 </div>

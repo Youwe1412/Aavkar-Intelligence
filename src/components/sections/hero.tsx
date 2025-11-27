@@ -4,8 +4,8 @@ import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import dynamic from "next/dynamic";
-const HeroScene = dynamic(() => import("@/components/hero/HeroScene").then(mod => mod.HeroScene), { ssr: false });
-import { MagneticButton } from "@/components/ui/MagneticButton";
+const HeroParticles = dynamic(() => import("@/components/hero/HeroParticles").then(mod => mod.HeroParticles), { ssr: false });
+import { MagneticButton, FluidType, Magnetic } from "@/components/ui/InteractiveKit";
 import gsap from "gsap";
 
 export function Hero() {
@@ -52,7 +52,7 @@ export function Hero() {
     return (
         <section ref={containerRef} className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden" data-scroll-section>
             {/* 3D Background Scene */}
-            <HeroScene />
+            <HeroParticles />
 
             {/* Gradient Overlay for Text Readability */}
             <div className="absolute inset-0 z-0 bg-gradient-to-b from-midnight/30 via-midnight/70 to-midnight pointer-events-none" />
@@ -68,13 +68,19 @@ export function Hero() {
 
                     <h1 ref={titleRef} className="text-5xl md:text-7xl font-serif font-bold text-white leading-tight mb-6 drop-shadow-2xl">
                         <span className="block opacity-0">
-                            AI doesn’t create advantage.
+                            <Magnetic className="inline-block">
+                                <span className="inline-block">AI doesn’t create advantage.</span>
+                            </Magnetic>
                         </span>
                         <span className="block opacity-0">
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-teal to-blue-violet">
-                                Intelligent humans
-                            </span>{" "}
-                            using AI do.
+                            <FluidType
+                                text="Intelligent humans"
+                                className="text-transparent bg-clip-text bg-gradient-to-r from-electric-teal to-blue-violet"
+                            />
+                            {" "}
+                            <Magnetic className="inline-block">
+                                <span className="inline-block">using AI do.</span>
+                            </Magnetic>
                         </span>
                     </h1>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 import { motion } from "framer-motion";
 
 export function CTA() {
@@ -26,12 +27,16 @@ export function CTA() {
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <Button size="lg" className="w-full sm:w-auto">
-                            Book an AI Strategy Call
-                        </Button>
-                        <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                            Tell us about your work
-                        </Button>
+                        <MagneticButton>
+                            <Button size="lg" className="w-full sm:w-auto">
+                                Book an AI Strategy Call
+                            </Button>
+                        </MagneticButton>
+                        <MagneticButton>
+                            <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                                Tell us about your work
+                            </Button>
+                        </MagneticButton>
                     </div>
                 </motion.div>
             </div>

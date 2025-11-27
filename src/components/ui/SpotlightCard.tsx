@@ -1,51 +1,77 @@
 "use client";
 
-import { useMotionValue, useMotionTemplate, motion } from "framer-motion";
-import { MouseEvent } from "react";
+import { useRef, useState, MouseEvent } from "react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
-interface SpotlightCardProps {
+interface SpotlightCardProps extends React.HTMLAttributes<HTMLDivElement> {
     children: React.ReactNode;
     className?: string;
-    spotlightColor?: string; // e.g., "rgba(45, 212, 191, 0.15)" for teal
+    spotlightColor?: string;
 }
 
 export function SpotlightCard({
     children,
-    className = "",
-    spotlightColor = "rgba(45, 212, 191, 0.15)"
+    className,
+    spotlightColor = "rgba(45, 212, 191, 0.15)" // Electric Teal default
 }: SpotlightCardProps) {
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
+    const divRef = useRef<HTMLDivElement>(null);
+    const [isFocused, setIsFocused] = useState(false);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [opacity, setOpacity] = useState(0);
 
-    function handleMouseMove({ currentTarget, clientX, clientY }: MouseEvent) {
-        const { left, top } = currentTarget.getBoundingClientRect();
-        mouseX.set(clientX - left);
-        mouseY.set(clientY - top);
-    }
+    const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+        if (!divRef.current) return;
+
+        const rect = divRef.current.getBoundingClientRect();
+        setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    };
+
+    const handleFocus = () => {
+        setIsFocused(true);
+        setOpacity(1);
+    };
+
+    const handleBlur = () => {
+        setIsFocused(false);
+        setOpacity(0);
+    };
+
+    const handleMouseEnter = () => {
+        setOpacity(1);
+    };
+
+    const handleMouseLeave = () => {
+        setOpacity(0);
+    };
 
     return (
-        <div
-            className={`group relative border border-white/10 bg-midnight overflow-hidden rounded-xl ${className}`}
+        <motion.div
+            ref={divRef}
             onMouseMove={handleMouseMove}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            className={cn(
+                "relative overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-md transition-colors duration-300",
+                className
+            )}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
         >
-            {/* Spotlight Overlay */}
-            <motion.div
-                className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
+            <div
+                className="pointer-events-none absolute -inset-px opacity-0 transition duration-300"
                 style={{
-                    background: useMotionTemplate`
-                        radial-gradient(
-                            650px circle at ${mouseX}px ${mouseY}px,
-                            ${spotlightColor},
-                            transparent 80%
-                        )
-                    `,
+                    opacity,
+                    background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 40%)`,
                 }}
             />
-
-            {/* Content */}
             <div className="relative h-full">
                 {children}
             </div>
-        </div>
+        </motion.div>
     );
 }

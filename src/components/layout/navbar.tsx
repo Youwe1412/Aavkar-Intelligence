@@ -3,11 +3,23 @@
 import * as React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function Navbar() {
     const [isOpen, setIsOpen] = React.useState(false);
+
+    const handleScroll = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+        e.preventDefault();
+        const href = e.currentTarget.href;
+        const targetId = href.replace(/.*\#/, "");
+        const elem = document.getElementById(targetId);
+        elem?.scrollIntoView({
+            behavior: "smooth",
+        });
+        setIsOpen(false);
+    };
 
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-midnight/80 backdrop-blur-md">
@@ -23,18 +35,20 @@ export function Navbar() {
 
                     {/* Desktop Links */}
                     <div className="hidden md:flex items-center gap-8">
-                        <Link href="#services" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <Link href="#services" onClick={handleScroll} className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
                             Services
                         </Link>
-                        <Link href="#approach" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <Link href="#approach" onClick={handleScroll} className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
                             Approach
                         </Link>
-                        <Link href="#about" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                        <Link href="#about" onClick={handleScroll} className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
                             About
                         </Link>
-                        <Button variant="primary" size="sm">
-                            Book Strategy Call
-                        </Button>
+                        <MagneticButton>
+                            <Button variant="primary" size="sm">
+                                Book Strategy Call
+                            </Button>
+                        </MagneticButton>
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -60,27 +74,29 @@ export function Navbar() {
                             <Link
                                 href="#services"
                                 className="text-base font-medium text-slate-400 hover:text-white"
-                                onClick={() => setIsOpen(false)}
+                                onClick={handleScroll}
                             >
                                 Services
                             </Link>
                             <Link
                                 href="#approach"
                                 className="text-base font-medium text-slate-400 hover:text-white"
-                                onClick={() => setIsOpen(false)}
+                                onClick={handleScroll}
                             >
                                 Approach
                             </Link>
                             <Link
                                 href="#about"
                                 className="text-base font-medium text-slate-400 hover:text-white"
-                                onClick={() => setIsOpen(false)}
+                                onClick={handleScroll}
                             >
                                 About
                             </Link>
-                            <Button variant="primary" className="w-full">
-                                Book Strategy Call
-                            </Button>
+                            <MagneticButton className="w-full">
+                                <Button variant="primary" className="w-full">
+                                    Book Strategy Call
+                                </Button>
+                            </MagneticButton>
                         </div>
                     </motion.div>
                 )}

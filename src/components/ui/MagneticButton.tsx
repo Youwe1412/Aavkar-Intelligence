@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import React, { useRef, useState } from "react";
+import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
+import { Magnetic } from "./Magnetic";
 
 interface MagneticButtonProps {
     children: React.ReactNode;
@@ -10,35 +11,44 @@ interface MagneticButtonProps {
 }
 
 export function MagneticButton({ children, className = "", onClick }: MagneticButtonProps) {
-    const ref = useRef<HTMLDivElement>(null);
-    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [isHovered, setIsHovered] = useState(false);
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
 
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        const { clientX, clientY } = e;
-        const { left, top, width, height } = ref.current!.getBoundingClientRect();
-
-        const x = clientX - (left + width / 2);
-        const y = clientY - (top + height / 2);
-
-        // "Stickiness" factor - lower is stickier/slower
-        setPosition({ x: x * 0.3, y: y * 0.3 });
-    };
-
-    const handleMouseLeave = () => {
-        setPosition({ x: 0, y: 0 });
-    };
+    function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+        const { left, top } = currentTarget.getBoundingClientRect();
+        mouseX.set(clientX - left);
+        mouseY.set(clientY - top);
+    }
 
     return (
-        <motion.div
-            ref={ref}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            animate={{ x: position.x, y: position.y }}
-            transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
-            className={`inline-block cursor-pointer ${className}`}
-            onClick={onClick}
-        >
-            {children}
-        </motion.div>
+        <Magnetic>
+            <div
+                className={`relative group ${className}`}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                onMouseMove={handleMouseMove}
+                onClick={onClick}
+            >
+                {/* Spotlight Gradient / Fluid Fill */}
+                <motion.div
+                    className="absolute inset-0 rounded-md bg-gradient-to-r from-electric-teal/20 to-blue-violet/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                    style={{
+                        background: useMotionTemplate`
+                            radial-gradient(
+                                150px circle at ${mouseX}px ${mouseY}px,
+                                rgba(45, 212, 191, 0.3),
+                                transparent 80%
+                            )
+                        `,
+                    }}
+                />
+
+                {/* Content */}
+                <div className="relative z-10">
+                    {children}
+                </div>
+            </div>
+        </Magnetic>
     );
 }

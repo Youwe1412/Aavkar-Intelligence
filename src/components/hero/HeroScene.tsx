@@ -1,12 +1,13 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Stars, Environment } from "@react-three/drei";
 import { useRef, useMemo } from "react";
 import * as THREE from "three";
 
 function ParticleNetwork() {
     const pointsRef = useRef<THREE.Points>(null);
+    const { mouse, viewport } = useThree();
 
     // Create 2000 random points inside a sphere
     const particlesPosition = useMemo(() => {
@@ -33,9 +34,19 @@ function ParticleNetwork() {
     useFrame((state) => {
         if (!pointsRef.current) return;
         const t = state.clock.getElapsedTime();
-        // Slow galaxy rotation
+
+        // Base rotation
         pointsRef.current.rotation.y = t * 0.05;
         pointsRef.current.rotation.x = t * 0.02;
+
+        // Mouse Parallax
+        // mouse.x and mouse.y are normalized (-1 to 1)
+        const targetRotationY = mouse.x * 0.2;
+        const targetRotationX = -mouse.y * 0.2;
+
+        // Smoothly interpolate towards mouse target
+        pointsRef.current.rotation.y += (targetRotationY - pointsRef.current.rotation.y) * 0.05;
+        pointsRef.current.rotation.x += (targetRotationX - pointsRef.current.rotation.x) * 0.05;
     });
 
     return (

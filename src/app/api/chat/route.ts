@@ -1,42 +1,34 @@
-import { OpenAIStream, StreamingTextResponse } from 'ai';
-import OpenAI from 'openai';
+import { google } from '@ai-sdk/google';
+import { streamText } from 'ai';
+import { getContext } from '@/lib/rag';
 
-// Create an OpenAI API client (that's edge friendly!)
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || 'dummy',
-});
-
-// IMPORTANT: Set the runtime to edge
-export const runtime = 'edge';
+// Allow streaming responses up to 30 seconds
+export const maxDuration = 30;
 
 export async function POST(req: Request) {
     const { messages } = await req.json();
 
-    // Ask OpenAI for a streaming chat completion given the prompt
-    const response = await openai.chat.completions.create({
-        model: 'gpt-4',
-        stream: true,
-        messages: [
-            {
-                role: 'system',
-                content: `You are Aavkar’s applied AI assistant. You are helpful, professional, and knowledgeable about Aavkar Intelligence's services.
+    // Get the last user message
+    const lastMessage = messages[messages.length - 1];
+    const userQuery = lastMessage.content;
+
+    // Retrieve context (RAG)
+    const context = await getContext(userQuery);
+
+    const systemPrompt = `You are Aavkar’s applied AI assistant. You are helpful, professional, and knowledgeable about Aavkar Intelligence's services.
     
     Aavkar Intelligence designs AI-native workflows, copilots, and digital employees for creative, learning, health, and operations teams.
     
-    Key domains:
-    1. Media & Content: AI-augmented creative workbench.
-    2. Education: Personalized learning paths.
-    3. Healthcare & Fitness: Clinical support and coaching.
-    4. Business & Enterprise: Digital employees for operations.
+    Tone: Futuristic, professional, yet accessible.
     
-    Tone: Futuristic, professional, yet accessible.`,
-            },
-            ...messages,
-        ],
+    ${context ? `\nRELEVANT CONTEXT FROM KNOWLEDGE BASE:\n${context}\n\nUse this context to answer the user's question accurately.` : ''}
+    `;
+
+    const result = await streamText({
+        model: google('gemini-1.5-pro-latest') as any,
+        system: systemPrompt,
+        messages: messages,
     });
 
-    // Convert the response into a friendly text-stream
-    const stream = OpenAIStream(response as any);
-    // Respond with the stream
-    return new StreamingTextResponse(stream);
+    return result.toDataStreamResponse();
 }

@@ -5,6 +5,7 @@ import { BackgroundWrapper } from "@/components/interactive/BackgroundWrapper";
 import { Navbar } from "@/components/layout/navbar";
 import { SmoothScrollWrapper } from "@/components/layout/SmoothScrollWrapper";
 import { Chatbot } from "@/components/interactive/Chatbot";
+import { CustomCursor } from "@/components/ui/CustomCursor";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -41,6 +42,7 @@ export default function RootLayout({
           {children}
         </SmoothScrollWrapper>
         <Chatbot />
+        <CustomCursor />
       </body>
     </html>
   );
