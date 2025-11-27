@@ -45,43 +45,44 @@ export const useScrollSync = (containerRef: React.RefObject<HTMLElement | null>,
             scrollRef.current = locoScroll;
 
             // Sync ScrollTrigger with Locomotive Scroll
-            ScrollTrigger.scrollerProxy(scrollEl, {
-                scrollTop(value) {
-                    return arguments.length
-                        ? locoScroll.scrollTo(value as any, { duration: 0, disableLerp: true })
-                        : (locoScroll as any).scroll.instance.scroll.y;
-                },
-                getBoundingClientRect() {
-                    return {
-                        top: 0,
-                        left: 0,
-                        width: window.innerWidth,
-                        height: window.innerHeight,
-                    };
-                },
-                pinType: scrollEl.style.transform ? 'transform' : 'fixed',
-            });
+            try {
+                ScrollTrigger.scrollerProxy(scrollEl, {
+                    scrollTop(value) {
+                        return arguments.length
+                            ? locoScroll.scrollTo(value as any, { duration: 0, disableLerp: true })
+                            : (locoScroll as any).scroll.instance.scroll.y;
+                    },
+                    getBoundingClientRect() {
+                        return {
+                            top: 0,
+                            left: 0,
+                            width: window.innerWidth,
+                            height: window.innerHeight,
+                        };
+                    },
+                    pinType: scrollEl.style.transform ? 'transform' : 'fixed',
+                });
 
-            // Set defaults for all ScrollTriggers to use this scroller
-            ScrollTrigger.defaults({
-                scroller: scrollEl,
-            });
+                // Update ScrollTrigger on Locomotive Scroll update
+                locoScroll.on('scroll', (args: any) => {
+                    ScrollTrigger.update();
+                    // Performance optimization: Only update store if value changed significantly or throttle it
+                    if (args.limit.y > 0) {
+                        const progress = args.scroll.y / args.limit.y;
+                        useUIStore.getState().setScrollProgress(progress);
+                    }
+                });
 
-            // Update ScrollTrigger on Locomotive Scroll update
-            locoScroll.on('scroll', (args: any) => {
-                ScrollTrigger.update();
-                // Performance optimization: Only update store if value changed significantly or throttle it
-                if (args.limit.y > 0) {
-                    const progress = args.scroll.y / args.limit.y;
-                    useUIStore.getState().setScrollProgress(progress);
-                }
-            });
+                // Refresh ScrollTrigger when window updates
+                ScrollTrigger.addEventListener('refresh', () => { locoScroll.update(); });
+                ScrollTrigger.refresh();
 
-            // Refresh ScrollTrigger when window updates
-            ScrollTrigger.addEventListener('refresh', () => { locoScroll.update(); });
-            ScrollTrigger.refresh();
+                console.log("Locomotive Scroll initialized successfully");
+            } catch (e) {
+                console.error("Failed to initialize ScrollTrigger proxy:", e);
+            }
 
-            // Signal that scroll is ready
+            // Signal that scroll is ready (even if proxy failed, we want content to show)
             useUIStore.getState().setScrollReady(true);
         });
 

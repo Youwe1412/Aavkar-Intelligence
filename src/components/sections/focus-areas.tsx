@@ -8,12 +8,17 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+import { useUIStore } from "@/store/uiStore";
+
 export function FocusAreas() {
     const containerRef = useRef<HTMLDivElement>(null);
     const section1Ref = useRef<HTMLDivElement>(null);
     const section2Ref = useRef<HTMLDivElement>(null);
+    const isScrollReady = useUIStore((state) => state.isScrollReady);
 
     useEffect(() => {
+        if (!isScrollReady) return;
+
         const ctx = gsap.context(() => {
             // Section 1 Animation
             gsap.fromTo(section1Ref.current,
@@ -25,7 +30,8 @@ export function FocusAreas() {
                     scrollTrigger: {
                         trigger: section1Ref.current,
                         start: "top bottom-=100",
-                        toggleActions: "play none none reverse"
+                        toggleActions: "play none none reverse",
+                        scroller: "[data-scroll-container]",
                     }
                 }
             );
@@ -40,14 +46,15 @@ export function FocusAreas() {
                     scrollTrigger: {
                         trigger: section2Ref.current,
                         start: "top bottom-=100",
-                        toggleActions: "play none none reverse"
+                        toggleActions: "play none none reverse",
+                        scroller: "[data-scroll-container]",
                     }
                 }
             );
         }, containerRef);
 
         return () => ctx.revert();
-    }, []);
+    }, [isScrollReady]);
 
     return (
         <section ref={containerRef} className="py-24 bg-midnight relative overflow-hidden" data-scroll-section>
