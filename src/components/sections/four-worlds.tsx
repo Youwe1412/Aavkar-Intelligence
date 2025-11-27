@@ -54,10 +54,13 @@ const worlds = [
 
 export function FourWorlds() {
     const setHoveredDomain = useUIStore((state) => state.setHoveredDomain);
+    const isScrollReady = useUIStore((state) => state.isScrollReady);
     const containerRef = useRef<HTMLDivElement>(null);
     const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
     useEffect(() => {
+        if (!isScrollReady) return;
+
         const ctx = gsap.context(() => {
             cardsRef.current.forEach((card, index) => {
                 if (!card) return;
@@ -73,7 +76,8 @@ export function FourWorlds() {
                         scrollTrigger: {
                             trigger: card,
                             start: "top bottom-=100",
-                            toggleActions: "play none none reverse"
+                            toggleActions: "play none none reverse",
+                            scroller: "[data-scroll-container]",
                         }
                     }
                 );
@@ -81,7 +85,7 @@ export function FourWorlds() {
         }, containerRef);
 
         return () => ctx.revert();
-    }, []);
+    }, [isScrollReady]);
 
     return (
         <section ref={containerRef} className="py-24 relative" data-scroll-section>

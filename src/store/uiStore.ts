@@ -7,6 +7,8 @@ interface UIState {
     setHoveredDomain: (domain: string | null) => void;
     scrollProgress: number;
     setScrollProgress: (progress: number) => void;
+    isScrollReady: boolean;
+    setScrollReady: (ready: boolean) => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -18,4 +20,6 @@ export const useUIStore = create<UIState>((set) => ({
     // CAUTION: This is updated on every scroll frame. Only subscribe to this if absolutely necessary.
     // Consider using useStore.getState().scrollProgress for non-reactive reads.
     setScrollProgress: (progress) => set({ scrollProgress: progress }),
+    isScrollReady: false,
+    setScrollReady: (ready) => set({ isScrollReady: ready }),
 }));

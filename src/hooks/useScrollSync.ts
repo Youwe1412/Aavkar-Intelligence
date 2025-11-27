@@ -62,12 +62,15 @@ export const useScrollSync = (containerRef: React.RefObject<HTMLElement | null>,
                 pinType: scrollEl.style.transform ? 'transform' : 'fixed',
             });
 
+            // Set defaults for all ScrollTriggers to use this scroller
+            ScrollTrigger.defaults({
+                scroller: scrollEl,
+            });
+
             // Update ScrollTrigger on Locomotive Scroll update
             locoScroll.on('scroll', (args: any) => {
                 ScrollTrigger.update();
                 // Performance optimization: Only update store if value changed significantly or throttle it
-                // For now, we keep it but be aware of the cost.
-                // Ideally, we should use a transient update or check if listeners exist.
                 if (args.limit.y > 0) {
                     const progress = args.scroll.y / args.limit.y;
                     useUIStore.getState().setScrollProgress(progress);
@@ -77,6 +80,9 @@ export const useScrollSync = (containerRef: React.RefObject<HTMLElement | null>,
             // Refresh ScrollTrigger when window updates
             ScrollTrigger.addEventListener('refresh', () => { locoScroll.update(); });
             ScrollTrigger.refresh();
+
+            // Signal that scroll is ready
+            useUIStore.getState().setScrollReady(true);
         });
 
         return () => {

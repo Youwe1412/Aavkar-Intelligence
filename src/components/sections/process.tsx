@@ -8,6 +8,7 @@
  */
 
 import { useEffect, useRef } from "react";
+import { useUIStore } from "@/store/uiStore";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -40,9 +41,10 @@ export function Process() {
     const containerRef = useRef<HTMLDivElement>(null);
     const lineRef = useRef<HTMLDivElement>(null);
     const stepsRef = useRef<(HTMLDivElement | null)[]>([]);
+    const isScrollReady = useUIStore((state) => state.isScrollReady);
 
     useEffect(() => {
-        if (!containerRef.current || !lineRef.current) return;
+        if (!containerRef.current || !lineRef.current || !isScrollReady) return;
 
         const ctx = gsap.context(() => {
             // Animate the vertical line filling up
@@ -57,6 +59,7 @@ export function Process() {
                         start: "top center",
                         end: "bottom center",
                         scrub: 0.5,
+                        scroller: "[data-scroll-container]",
                     },
                 }
             );
@@ -78,6 +81,7 @@ export function Process() {
                             start: "top center+=100",
                             end: "bottom center-=100",
                             toggleActions: "play reverse play reverse",
+                            scroller: "[data-scroll-container]",
                         },
                     }
                 );
@@ -85,7 +89,7 @@ export function Process() {
         }, containerRef);
 
         return () => ctx.revert();
-    }, []);
+    }, [isScrollReady]);
 
     return (
         <section ref={containerRef} className="py-32 bg-midnight-light relative overflow-hidden" data-scroll-section>
