@@ -1,28 +1,34 @@
 "use client";
-
-import { useRef } from "react";
-import { useScrollSync } from "@/hooks/useScrollSync";
+import { useEffect, useRef } from "react";
+// import { useScrollSync } from "@/hooks/useScrollSync";
 import "locomotive-scroll/dist/locomotive-scroll.css";
+import { useUIStore } from "@/store/uiStore";
 
 export function SmoothScrollWrapper({ children }: { children: React.ReactNode }) {
     const containerRef = useRef<HTMLDivElement>(null);
+    const setScrollReady = useUIStore((state) => state.setScrollReady);
 
-    const options = {
-        smooth: true,
-        multiplier: 1,
-        smartphone: {
-            smooth: true,
-        },
-        tablet: {
-            smooth: true,
-            breakpoint: 1024,
-        },
-    };
+    useEffect(() => {
+        // Fallback to native scroll for now to fix crash
+        setScrollReady(true);
+    }, [setScrollReady]);
 
-    useScrollSync(containerRef, options);
+    // const options = {
+    //     smooth: true,
+    //     multiplier: 1,
+    //     smartphone: {
+    //         smooth: true,
+    //     },
+    //     tablet: {
+    //         smooth: true,
+    //         breakpoint: 1024,
+    //     },
+    // };
+
+    // useScrollSync(containerRef, options);
 
     return (
-        <div ref={containerRef} data-scroll-container className="min-h-screen flex flex-col">
+        <div ref={containerRef} data-scroll-container className="h-screen w-full overflow-y-auto overflow-x-hidden">
             {children}
         </div>
     );
