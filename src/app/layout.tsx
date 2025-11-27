@@ -1,16 +1,21 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
-import { FluidBackground } from "@/components/interactive/FluidBackground";
+import { BackgroundWrapper } from "@/components/interactive/BackgroundWrapper";
+import { Navbar } from "@/components/layout/navbar";
+import { SmoothScrollWrapper } from "@/components/layout/SmoothScrollWrapper";
+import { Chatbot } from "@/components/interactive/Chatbot";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-serif",
+  display: "swap",
 });
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -28,10 +33,14 @@ export default function RootLayout({
       <body
         className={`${playfair.variable} ${inter.variable} antialiased bg-midnight text-white`}
       >
-        <FluidBackground />
+        <BackgroundWrapper />
+        <Navbar />
         <div className="grain-overlay" />
         <div className="vignette-overlay" />
-        {children}
+        <SmoothScrollWrapper>
+          {children}
+        </SmoothScrollWrapper>
+        <Chatbot />
       </body>
     </html>
   );

@@ -1,25 +1,9 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useEffect } from "react";
 import * as THREE from "three";
-
-/**
- * FluidBackground.tsx
- * 
- * Performance Strategy:
- * Instead of a heavy FBO-based fluid solver (which can be expensive on mobile/laptops),
- * we use a domain-warped noise shader.
- * 
- * 1. Geometry: A single fullscreen PlaneGeometry.
- * 2. Shader: Fragment shader uses simplex noise to generate "smoke" patterns.
- * 3. Interaction: Mouse position is passed as a uniform (`uMouse`) to perturb the noise coordinates,
- *    creating a "trail" effect.
- * 4. Optimization: 
- *    - `dpr={[1, 1.5]}` limits pixel ratio to save GPU.
- *    - `pointer-events-none` ensures no DOM blocking.
- *    - No complex physics calculations per frame, just time-based shader math.
- */
+import { useUIStore } from "@/store/uiStore";
 
 const vertexShader = `
 varying vec2 vUv;
@@ -33,6 +17,10 @@ const fragmentShader = `
 uniform float uTime;
 uniform vec2 uMouse;
 uniform vec2 uResolution;
+uniform vec3 uBaseColor;
+uniform vec3 uHighlight1;
+uniform vec3 uHighlight2;
+
 varying vec2 vUv;
 
 // Simplex 2D noise
@@ -61,6 +49,7 @@ float snoise(vec2 v){
   vec3 g;
   g.x  = a0.x  * x0.x  + h.x  * x0.y;
   g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
   return 130.0 * dot(m, g);
 }
 
@@ -88,14 +77,14 @@ void main() {
 
   float f = snoise(st + r);
 
-  // Color palette: Deep Black base -> Cyan/Purple highlights
-  vec3 color = vec3(0.02, 0.02, 0.03); // Base dark
+  // Color mixing
+  vec3 color = uBaseColor;
   
-  // Mix in Cyan
-  color = mix(color, vec3(0.176, 0.831, 0.749), clamp(length(q), 0.0, 1.0) * 0.1);
+  // Mix in Highlight 1
+  color = mix(color, uHighlight1, clamp(length(q), 0.0, 1.0) * 0.1);
   
-  // Mix in Purple
-  color = mix(color, vec3(0.506, 0.549, 0.973), clamp(length(r), 0.0, 1.0) * 0.05);
+  // Mix in Highlight 2
+  color = mix(color, uHighlight2, clamp(length(r), 0.0, 1.0) * 0.05);
 
   // Add "smoke" intensity
   color += f * f * f * 0.15;
@@ -104,15 +93,27 @@ void main() {
 }
 `;
 
+const DOMAIN_COLORS: Record<string, { base: string, h1: string, h2: string }> = {
+    default: { base: "#02040A", h1: "#2DD4BF", h2: "#818CF8" }, // Midnight, Teal, Violet
+    media: { base: "#1a050a", h1: "#ec4899", h2: "#a855f7" }, // Pink/Purple
+    education: { base: "#1a0f00", h1: "#f59e0b", h2: "#ea580c" }, // Amber/Orange
+    health: { base: "#021a10", h1: "#10b981", h2: "#0d9488" }, // Emerald/Teal
+    business: { base: "#050a1a", h1: "#3b82f6", h2: "#4f46e5" }, // Blue/Indigo
+};
+
 function FluidPlane() {
     const mesh = useRef<THREE.Mesh>(null);
     const { viewport, size } = useThree();
+    const hoveredDomain = useUIStore((state) => state.hoveredDomain);
 
     const uniforms = useMemo(
         () => ({
             uTime: { value: 0 },
             uMouse: { value: new THREE.Vector2(0, 0) },
             uResolution: { value: new THREE.Vector2(size.width, size.height) },
+            uBaseColor: { value: new THREE.Color(DOMAIN_COLORS.default.base) },
+            uHighlight1: { value: new THREE.Color(DOMAIN_COLORS.default.h1) },
+            uHighlight2: { value: new THREE.Color(DOMAIN_COLORS.default.h2) },
         }),
         [size]
     );
@@ -122,11 +123,17 @@ function FluidPlane() {
             const material = mesh.current.material as THREE.ShaderMaterial;
             material.uniforms.uTime.value = state.clock.getElapsedTime();
 
-            // Smoothly interpolate mouse position for fluid feel
+            // Smoothly interpolate mouse position
             const targetX = (state.pointer.x * 0.5 + 0.5) * size.width;
             const targetY = (state.pointer.y * 0.5 + 0.5) * size.height;
-
             material.uniforms.uMouse.value.lerp(new THREE.Vector2(targetX, targetY), 0.1);
+
+            // Smoothly interpolate colors
+            const targetColors = DOMAIN_COLORS[hoveredDomain || 'default'] || DOMAIN_COLORS.default;
+
+            material.uniforms.uBaseColor.value.lerp(new THREE.Color(targetColors.base), 0.05);
+            material.uniforms.uHighlight1.value.lerp(new THREE.Color(targetColors.h1), 0.05);
+            material.uniforms.uHighlight2.value.lerp(new THREE.Color(targetColors.h2), 0.05);
         }
     });
 

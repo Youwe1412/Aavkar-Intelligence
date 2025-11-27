@@ -1,12 +1,56 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
 import { Wand2, Users } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export function FocusAreas() {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const section1Ref = useRef<HTMLDivElement>(null);
+    const section2Ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const ctx = gsap.context(() => {
+            // Section 1 Animation
+            gsap.fromTo(section1Ref.current,
+                { opacity: 0, x: -50 },
+                {
+                    opacity: 1,
+                    x: 0,
+                    duration: 1,
+                    scrollTrigger: {
+                        trigger: section1Ref.current,
+                        start: "top bottom-=100",
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+
+            // Section 2 Animation
+            gsap.fromTo(section2Ref.current,
+                { opacity: 0, x: 50 },
+                {
+                    opacity: 1,
+                    x: 0,
+                    duration: 1,
+                    scrollTrigger: {
+                        trigger: section2Ref.current,
+                        start: "top bottom-=100",
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+        }, containerRef);
+
+        return () => ctx.revert();
+    }, []);
+
     return (
-        <section className="py-24 bg-midnight relative overflow-hidden">
+        <section ref={containerRef} className="py-24 bg-midnight relative overflow-hidden" data-scroll-section>
             <div className="container mx-auto px-6">
                 <div className="text-center mb-20">
                     <span className="text-electric-teal font-medium tracking-wide uppercase text-sm">Active Focus</span>
@@ -21,12 +65,7 @@ export function FocusAreas() {
                 <div className="space-y-24">
                     {/* Area 1: Media */}
                     <div className="grid md:grid-cols-2 gap-12 items-center">
-                        <motion.div
-                            initial={{ opacity: 0, x: -50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            className="order-2 md:order-1"
-                        >
+                        <div ref={section1Ref} className="order-2 md:order-1">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 text-pink-400 text-xs font-medium mb-6">
                                 <Wand2 className="h-3 w-3" />
                                 Media & Content
@@ -46,28 +85,24 @@ export function FocusAreas() {
                                 ))}
                             </ul>
                             <Button variant="outline">Explore Creative AI with Us</Button>
-                        </motion.div>
-                        <div className="order-1 md:order-2 relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-pink-900/20 to-midnight-light border border-white/10">
+                        </div>
+                        <div className="order-1 md:order-2 relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-pink-900/20 to-midnight-light border border-white/10 group">
                             <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
                             <div className="absolute inset-0 flex items-center justify-center">
-                                <span className="text-pink-500/20 font-serif text-6xl font-bold">Workbench</span>
+                                <span className="text-pink-500/20 font-serif text-6xl font-bold group-hover:scale-110 transition-transform duration-700">Workbench</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Area 2: Operations */}
                     <div className="grid md:grid-cols-2 gap-12 items-center">
-                        <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-blue-900/20 to-midnight-light border border-white/10">
+                        <div className="relative aspect-video rounded-2xl overflow-hidden bg-gradient-to-br from-blue-900/20 to-midnight-light border border-white/10 group">
                             <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
                             <div className="absolute inset-0 flex items-center justify-center">
-                                <span className="text-blue-500/20 font-serif text-6xl font-bold">Frontline</span>
+                                <span className="text-blue-500/20 font-serif text-6xl font-bold group-hover:scale-110 transition-transform duration-700">Frontline</span>
                             </div>
                         </div>
-                        <motion.div
-                            initial={{ opacity: 0, x: 50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                        >
+                        <div ref={section2Ref}>
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs font-medium mb-6">
                                 <Users className="h-3 w-3" />
                                 Operations & Training
@@ -87,7 +122,7 @@ export function FocusAreas() {
                                 ))}
                             </ul>
                             <Button variant="outline">Explore Ops Possibilities</Button>
-                        </motion.div>
+                        </div>
                     </div>
                 </div>
             </div>

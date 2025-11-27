@@ -1,11 +1,17 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
-import { motion } from "framer-motion";
 import { Clapperboard, Building2, GraduationCap, HeartPulse } from "lucide-react";
+import { useUIStore } from "@/store/uiStore";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const worlds = [
     {
+        id: "media",
         icon: Clapperboard,
         title: "Media & Content",
         question: "What if your creative process had a thinking partner?",
@@ -15,6 +21,7 @@ const worlds = [
         gradient: "from-pink-500 to-purple-600",
     },
     {
+        id: "education",
         icon: GraduationCap,
         title: "Education",
         question: "What if every learner had a path tuned to their curiosity?",
@@ -24,6 +31,7 @@ const worlds = [
         gradient: "from-amber-500 to-orange-600",
     },
     {
+        id: "health",
         icon: HeartPulse,
         title: "Healthcare & Fitness",
         question: "What if clinicians and coaches had more presence, not more paperwork?",
@@ -33,6 +41,7 @@ const worlds = [
         gradient: "from-emerald-500 to-teal-600",
     },
     {
+        id: "business",
         icon: Building2,
         title: "Business & Enterprise",
         question: "What if digital employees quietly supported every decision?",
@@ -44,8 +53,38 @@ const worlds = [
 ];
 
 export function FourWorlds() {
+    const setHoveredDomain = useUIStore((state) => state.setHoveredDomain);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+    useEffect(() => {
+        const ctx = gsap.context(() => {
+            cardsRef.current.forEach((card, index) => {
+                if (!card) return;
+
+                gsap.fromTo(card,
+                    { opacity: 0, y: 50, scale: 0.9 },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        duration: 0.8,
+                        delay: index * 0.1,
+                        scrollTrigger: {
+                            trigger: card,
+                            start: "top bottom-=100",
+                            toggleActions: "play none none reverse"
+                        }
+                    }
+                );
+            });
+        }, containerRef);
+
+        return () => ctx.revert();
+    }, []);
+
     return (
-        <section className="py-24 bg-midnight-light relative">
+        <section ref={containerRef} className="py-24 relative" data-scroll-section>
             <div className="container mx-auto px-6">
                 <div className="mb-16">
                     <span className="text-electric-teal font-medium tracking-wide uppercase text-sm">The 4 Worlds</span>
@@ -53,21 +92,23 @@ export function FourWorlds() {
                         Domains of Applied Intelligence
                     </h2>
                     <p className="text-slate-400 max-w-2xl text-lg">
-                        We don't offer a fixed menu of services. We explore what becomes possible in these worlds when we apply intelligence well.
+                        We don&apos;t offer a fixed menu of services. We explore what becomes possible in these worlds when we apply intelligence well.
                     </p>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                     {worlds.map((world, index) => (
-                        <motion.div
+                        <div
                             key={index}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
-                            whileHover={{ y: -5, scale: 1.02 }}
+                            ref={(el) => { cardsRef.current[index] = el }}
+                            onMouseEnter={() => setHoveredDomain(world.id)}
+                            onMouseLeave={() => setHoveredDomain(null)}
+                            className="group relative"
                         >
-                            <Card className="h-full group relative overflow-hidden border-white/5 bg-midnight hover:border-white/20 transition-colors duration-500">
+                            {/* Animated Border Gradient */}
+                            <div className="absolute -inset-[1px] rounded-xl bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 group-hover:animate-border-spin bg-[length:200%_200%]" />
+
+                            <Card className="h-full relative overflow-hidden border-white/5 bg-midnight/80 backdrop-blur-md hover:border-white/20 transition-colors duration-500 z-10">
                                 {/* Hover Gradient Background */}
                                 <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 bg-gradient-to-br ${world.gradient}`} />
 
@@ -78,7 +119,7 @@ export function FourWorlds() {
 
                                     <h3 className="text-2xl font-bold text-white mb-2">{world.title}</h3>
                                     <h4 className="text-lg font-medium text-white/90 mb-4 italic font-serif">
-                                        "{world.question}"
+                                        &quot;{world.question}&quot;
                                     </h4>
                                     <p className="text-slate-400 leading-relaxed mb-8">
                                         {world.description}
@@ -89,7 +130,7 @@ export function FourWorlds() {
                                     </div>
                                 </div>
                             </Card>
-                        </motion.div>
+                        </div>
                     ))}
                 </div>
             </div>

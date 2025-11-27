@@ -1,61 +1,88 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { HeroScene } from "@/components/hero/HeroScene";
+import dynamic from "next/dynamic";
+const HeroScene = dynamic(() => import("@/components/hero/HeroScene").then(mod => mod.HeroScene), { ssr: false });
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import gsap from "gsap";
 
 export function Hero() {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const badgeRef = useRef<HTMLDivElement>(null);
+    const titleRef = useRef<HTMLHeadingElement>(null);
+    const descRef = useRef<HTMLParagraphElement>(null);
+    const buttonsRef = useRef<HTMLDivElement>(null);
+    const scrollRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const ctx = gsap.context(() => {
+            const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+            tl.fromTo(badgeRef.current,
+                { y: 20, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.8 }
+            )
+                .fromTo(titleRef.current?.children || [],
+                    { y: 50, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 1, stagger: 0.2 },
+                    "-=0.4"
+                )
+                .fromTo(descRef.current,
+                    { y: 30, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 1 },
+                    "-=0.6"
+                )
+                .fromTo(buttonsRef.current?.children || [],
+                    { y: 20, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 0.8, stagger: 0.1 },
+                    "-=0.6"
+                )
+                .fromTo(scrollRef.current,
+                    { opacity: 0 },
+                    { opacity: 1, duration: 1, delay: 0.5 }
+                );
+
+        }, containerRef);
+
+        return () => ctx.revert();
+    }, []);
+
     return (
-        <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <section ref={containerRef} className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden" data-scroll-section>
             {/* 3D Background Scene */}
             <HeroScene />
 
             {/* Gradient Overlay for Text Readability */}
-            <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-midnight/50 to-midnight pointer-events-none" />
+            <div className="absolute inset-0 z-0 bg-gradient-to-b from-midnight/30 via-midnight/70 to-midnight pointer-events-none" />
 
             <div className="container mx-auto px-6 relative z-10 text-center">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="max-w-4xl mx-auto"
-                >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-8 backdrop-blur-sm">
+                <div className="max-w-4xl mx-auto">
+                    <div ref={badgeRef} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-8 backdrop-blur-sm opacity-0">
                         <span className="flex h-2 w-2 rounded-full bg-electric-teal animate-pulse" />
                         <span className="text-xs font-medium text-slate-300 tracking-wide uppercase">
                             Applied Intelligence by Aavkar
                         </span>
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl font-serif font-bold text-white leading-tight mb-6 drop-shadow-2xl">
-                        <motion.span
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-                            className="block"
-                        >
+                    <h1 ref={titleRef} className="text-5xl md:text-7xl font-serif font-bold text-white leading-tight mb-6 drop-shadow-2xl">
+                        <span className="block opacity-0">
                             AI doesn’t create advantage.
-                        </motion.span>
-                        <motion.span
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
-                            className="block"
-                        >
+                        </span>
+                        <span className="block opacity-0">
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-teal to-blue-violet">
                                 Intelligent humans
                             </span>{" "}
                             using AI do.
-                        </motion.span>
+                        </span>
                     </h1>
 
-                    <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed drop-shadow-md">
+                    <p ref={descRef} className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed drop-shadow-md opacity-0">
                         We design AI-native workflows, copilots, and digital employees for creative, learning, health, and operations teams that want to work smarter, not louder.
                     </p>
 
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <div ref={buttonsRef} className="flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0">
                         <MagneticButton>
                             <Button size="lg" className="group relative overflow-hidden">
                                 <span className="relative z-10 flex items-center">
@@ -72,19 +99,14 @@ export function Hero() {
                             </Button>
                         </MagneticButton>
                     </div>
-                </motion.div>
+                </div>
             </div>
 
             {/* Scroll Indicator */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1, duration: 1 }}
-                className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10"
-            >
+            <div ref={scrollRef} className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10 opacity-0">
                 <span className="text-xs text-slate-500 uppercase tracking-widest">Scroll</span>
                 <div className="w-[1px] h-12 bg-gradient-to-b from-slate-500 to-transparent" />
-            </motion.div>
+            </div>
         </section>
     );
 }

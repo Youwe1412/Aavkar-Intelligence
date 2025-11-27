@@ -1,4 +1,3 @@
-import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { Hero } from "@/components/sections/hero";
 import { Credibility } from "@/components/sections/credibility";
@@ -12,7 +11,6 @@ import { CTA } from "@/components/sections/cta";
 export default function Home() {
   return (
     <main className="min-h-screen bg-midnight text-white selection:bg-electric-teal/30">
-      <Navbar />
       <Hero />
       <Credibility />
       <div id="services">

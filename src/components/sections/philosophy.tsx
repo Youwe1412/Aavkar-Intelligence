@@ -1,11 +1,53 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 import { Check, X } from "lucide-react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export function Philosophy() {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const card1Ref = useRef<HTMLDivElement>(null);
+    const card2Ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const ctx = gsap.context(() => {
+            gsap.fromTo(card1Ref.current,
+                { x: -50, opacity: 0 },
+                {
+                    x: 0,
+                    opacity: 1,
+                    duration: 1,
+                    scrollTrigger: {
+                        trigger: card1Ref.current,
+                        start: "top bottom-=100",
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+
+            gsap.fromTo(card2Ref.current,
+                { x: 50, opacity: 0 },
+                {
+                    x: 0,
+                    opacity: 1,
+                    duration: 1,
+                    scrollTrigger: {
+                        trigger: card2Ref.current,
+                        start: "top bottom-=100",
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+        }, containerRef);
+
+        return () => ctx.revert();
+    }, []);
+
     return (
-        <section className="py-24 bg-midnight-light relative">
+        <section ref={containerRef} className="py-24 bg-midnight-light relative" data-scroll-section>
             <div className="container mx-auto px-6">
                 <div className="text-center mb-16">
                     <span className="text-electric-teal font-medium tracking-wide uppercase text-sm">Our Philosophy</span>
@@ -16,7 +58,7 @@ export function Philosophy() {
 
                 <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     {/* Software 1.0 */}
-                    <div className="p-8 rounded-2xl border border-white/5 bg-midnight/50">
+                    <div ref={card1Ref} className="p-8 rounded-2xl border border-white/5 bg-midnight/50">
                         <h3 className="text-xl font-bold text-slate-400 mb-6">Software 1.0 (The Old Way)</h3>
                         <p className="text-slate-400 mb-8 h-20">
                             You specify the rules. Limited by what you can explicitly code. Brittle when edge cases arise.
@@ -38,11 +80,11 @@ export function Philosophy() {
                     </div>
 
                     {/* Software 2.0 */}
-                    <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        className="p-8 rounded-2xl border border-electric-teal/20 bg-gradient-to-b from-electric-teal/5 to-midnight relative overflow-hidden"
+                    <div
+                        ref={card2Ref}
+                        className="p-8 rounded-2xl border border-electric-teal/20 bg-gradient-to-b from-electric-teal/5 to-midnight relative overflow-hidden group hover:border-electric-teal/40 transition-colors duration-500"
                     >
-                        <div className="absolute top-0 right-0 p-4 opacity-20">
+                        <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
                             <div className="h-32 w-32 bg-electric-teal rounded-full blur-[64px]" />
                         </div>
 
@@ -64,12 +106,12 @@ export function Philosophy() {
                                 <span>Scales with data</span>
                             </li>
                         </ul>
-                    </motion.div>
+                    </div>
                 </div>
 
                 <div className="mt-16 text-center max-w-2xl mx-auto">
                     <p className="text-lg text-slate-400">
-                        We don't just deploy models. We design the <span className="text-white font-medium">specifications</span> and the <span className="text-white font-medium">verification loops</span> so you can trust the system to do real work.
+                        We don&apos;t just deploy models. We design the <span className="text-white font-medium">specifications</span> and the <span className="text-white font-medium">verification loops</span> so you can trust the system to do real work.
                     </p>
                 </div>
             </div>
