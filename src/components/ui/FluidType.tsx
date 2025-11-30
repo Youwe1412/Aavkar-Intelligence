@@ -17,20 +17,21 @@ export function FluidType({
     repulsionStrength = 50
 }: FluidTypeProps) {
     return (
-        <div className={`inline-block relative ${className}`}>
+        <span className="inline-block relative">
             {text.split("").map((char, i) => (
                 <FluidChar
                     key={i}
                     char={char}
+                    className={className}
                     radius={repulsionRadius}
                     strength={repulsionStrength}
                 />
             ))}
-        </div>
+        </span>
     );
 }
 
-function FluidChar({ char, radius, strength }: { char: string; radius: number; strength: number }) {
+function FluidChar({ char, className, radius, strength }: { char: string; className: string; radius: number; strength: number }) {
     const ref = useRef<HTMLSpanElement>(null);
     const x = useSpring(0, { stiffness: 150, damping: 15, mass: 0.1 });
     const y = useSpring(0, { stiffness: 150, damping: 15, mass: 0.1 });
@@ -75,8 +76,8 @@ function FluidChar({ char, radius, strength }: { char: string; radius: number; s
     return (
         <motion.span
             ref={ref}
-            style={{ x, y, display: "inline-block" }}
-            className="relative z-10"
+            className={className}
+            style={{ x, y, position: "relative", display: "inline-block" }}
         >
             {char === " " ? "\u00A0" : char}
         </motion.span>

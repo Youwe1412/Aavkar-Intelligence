@@ -2,16 +2,38 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Stars, Environment } from "@react-three/drei";
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useEffect } from "react";
 import * as THREE from "three";
+import { useHardwareTier, HardwareTier } from "@/hooks/useHardwareTier";
 
-function ParticleNetwork() {
+function ElasticCamera({ tier }: { tier: HardwareTier }) {
+    const { camera, viewport, size } = useThree();
+
+    useFrame(() => {
+        // Elastic Camera Logic: z = BaseDistance + (1 / aspect) * ScaleFactor
+        // Base distance 5, ScaleFactor ~2. Adjust as needed.
+        const aspect = size.width / size.height;
+        const baseDistance = 4;
+        const scaleFactor = 2.5;
+
+        // Target Z based on aspect ratio
+        const targetZ = baseDistance + (1 / aspect) * scaleFactor;
+
+        // Smoothly interpolate camera position
+        camera.position.z += (targetZ - camera.position.z) * 0.1;
+        camera.updateProjectionMatrix();
+    });
+
+    return null;
+}
+
+function ParticleNetwork({ tier }: { tier: HardwareTier }) {
     const pointsRef = useRef<THREE.Points>(null);
-    const { mouse, viewport } = useThree();
+    const { mouse } = useThree();
 
-    // Create 2000 random points inside a sphere
+    // Generate particles based on tier count
     const particlesPosition = useMemo(() => {
-        const count = 2000;
+        const count = tier.particleCount;
         const positions = new Float32Array(count * 3);
 
         for (let i = 0; i < count; i++) {
@@ -29,24 +51,30 @@ function ParticleNetwork() {
         }
 
         return positions;
-    }, []);
+    }, [tier.particleCount]);
 
     useFrame((state) => {
         if (!pointsRef.current) return;
         const t = state.clock.getElapsedTime();
 
-        // Base rotation
-        pointsRef.current.rotation.y = t * 0.05;
-        pointsRef.current.rotation.x = t * 0.02;
+        // Base rotation (Auto-rotation)
+        // On mobile (touch), we rely more on this auto-rotation
+        const autoRotationSpeed = tier.isMobile ? 0.1 : 0.05;
+        pointsRef.current.rotation.y = t * autoRotationSpeed;
+        pointsRef.current.rotation.x = t * (autoRotationSpeed * 0.4);
 
-        // Mouse Parallax
-        // mouse.x and mouse.y are normalized (-1 to 1)
-        const targetRotationY = mouse.x * 0.2;
-        const targetRotationX = -mouse.y * 0.2;
+        // Mouse Parallax (Desktop only)
+        if (!tier.isMobile) {
+            // mouse.x and mouse.y are normalized (-1 to 1)
+            const targetRotationY = mouse.x * 0.2;
+            const targetRotationX = -mouse.y * 0.2;
 
-        // Smoothly interpolate towards mouse target
-        pointsRef.current.rotation.y += (targetRotationY - pointsRef.current.rotation.y) * 0.05;
-        pointsRef.current.rotation.x += (targetRotationX - pointsRef.current.rotation.x) * 0.05;
+            // Smoothly interpolate towards mouse target
+            // We add this to the base rotation or offset it
+            // Here we'll just add a subtle offset to the auto-rotation
+            pointsRef.current.rotation.y += (targetRotationY - pointsRef.current.rotation.y) * 0.05;
+            pointsRef.current.rotation.x += (targetRotationX - pointsRef.current.rotation.x) * 0.05;
+        }
     });
 
     return (
@@ -61,27 +89,37 @@ function ParticleNetwork() {
                 />
             </bufferGeometry>
             <pointsMaterial
-                size={0.02}
+                size={tier.isMobile ? 0.03 : 0.02} // Slightly larger on mobile for visibility with fewer particles
                 color="#4F46E5" // Indigo
                 transparent
                 opacity={0.8}
                 sizeAttenuation={true}
                 depthWrite={false}
+                blending={THREE.AdditiveBlending}
             />
         </points>
     );
 }
 
-function Scene() {
+function Scene({ tier }: { tier: HardwareTier }) {
     return (
         <>
             <ambientLight intensity={0.5} />
             <pointLight position={[10, 10, 10]} intensity={1} color="#2DD4BF" />
             <pointLight position={[-10, -10, -10]} intensity={1} color="#818CF8" />
 
-            <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+            <Stars
+                radius={100}
+                depth={50}
+                count={tier.isMobile ? 1000 : 5000}
+                factor={4}
+                saturation={0}
+                fade
+                speed={1}
+            />
 
-            <ParticleNetwork />
+            <ParticleNetwork tier={tier} />
+            <ElasticCamera tier={tier} />
 
             <Environment preset="city" />
 
@@ -92,10 +130,16 @@ function Scene() {
 }
 
 export function HeroScene() {
+    const tier = useHardwareTier();
+
     return (
         <div className="absolute inset-0 z-0 opacity-80 pointer-events-none">
-            <Canvas camera={{ position: [0, 0, 6], fov: 45 }} dpr={[1, 2]}>
-                <Scene />
+            <Canvas
+                camera={{ position: [0, 0, 6], fov: 45 }}
+                dpr={tier.dpr}
+                gl={{ antialias: !tier.isMobile }} // Disable antialias on mobile for perf
+            >
+                <Scene tier={tier} />
             </Canvas>
         </div>
     );

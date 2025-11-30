@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import dynamic from "next/dynamic";
-const HeroParticles = dynamic(() => import("@/components/hero/HeroParticles").then(mod => mod.HeroParticles), { ssr: false });
+const HeroScene = dynamic(() => import("@/components/hero/HeroScene").then(mod => mod.HeroScene), { ssr: false });
 import { MagneticButton, FluidType, Magnetic } from "@/components/ui/InteractiveKit";
 import gsap from "gsap";
 
@@ -52,7 +52,7 @@ export function Hero() {
     return (
         <section ref={containerRef} className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden" data-scroll-section>
             {/* 3D Background Scene */}
-            <HeroParticles />
+            <HeroScene />
 
             {/* Gradient Overlay for Text Readability */}
             <div className="absolute inset-0 z-0 bg-gradient-to-b from-midnight/30 via-midnight/70 to-midnight pointer-events-none" />
@@ -66,7 +66,7 @@ export function Hero() {
                         </span>
                     </div>
 
-                    <h1 ref={titleRef} className="text-5xl md:text-7xl font-serif font-bold text-white leading-tight mb-6 drop-shadow-2xl">
+                    <h1 ref={titleRef} className="text-[clamp(2.5rem,5vw,4.5rem)] md:text-[clamp(3.5rem,6vw,6rem)] font-serif font-bold text-white leading-tight mb-6 drop-shadow-2xl">
                         <span className="block opacity-0">
                             <Magnetic className="inline-block">
                                 <span className="inline-block">AI doesn’t create advantage.</span>
@@ -75,7 +75,7 @@ export function Hero() {
                         <span className="block opacity-0">
                             <FluidType
                                 text="Intelligent humans"
-                                className="text-transparent bg-clip-text bg-gradient-to-r from-electric-teal to-blue-violet"
+                                className="text-transparent bg-clip-text bg-gradient-to-r from-electric-teal to-blue-violet bg-fixed"
                             />
                             {" "}
                             <Magnetic className="inline-block">
@@ -84,7 +84,7 @@ export function Hero() {
                         </span>
                     </h1>
 
-                    <p ref={descRef} className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed drop-shadow-md opacity-0">
+                    <p ref={descRef} className="text-[clamp(1rem,2vw,1.25rem)] text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed drop-shadow-md opacity-0">
                         We design AI-native workflows, copilots, and digital employees for creative, learning, health, and operations teams that want to work smarter, not louder.
                     </p>
 
