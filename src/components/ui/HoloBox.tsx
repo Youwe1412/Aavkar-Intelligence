@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 interface HoloBoxProps {
@@ -8,18 +8,9 @@ interface HoloBoxProps {
     className?: string;
 }
 
-import { useHardwareTier } from "@/hooks/useHardwareTier";
-
 export function HoloBox({ children, className = "" }: HoloBoxProps) {
     const ref = useRef<HTMLDivElement>(null);
-    const { isMobile } = useHardwareTier();
     const [hovering, setHovering] = useState(false);
-
-    useEffect(() => {
-        if (isMobile) {
-            setHovering(true);
-        }
-    }, [isMobile]);
 
     const x = useMotionValue(0);
     const y = useMotionValue(0);
@@ -58,9 +49,9 @@ export function HoloBox({ children, className = "" }: HoloBoxProps) {
         <motion.div
             ref={ref}
             className={`relative rounded-xl overflow-hidden bg-black/40 backdrop-blur-md border border-white/10 ${className}`}
-            onMouseMove={isMobile ? undefined : handleMouseMove}
-            onMouseLeave={isMobile ? undefined : handleMouseLeave}
-            onMouseEnter={isMobile ? undefined : handleMouseEnter}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            onMouseEnter={handleMouseEnter}
             style={{
                 transformStyle: "preserve-3d",
                 rotateX,
