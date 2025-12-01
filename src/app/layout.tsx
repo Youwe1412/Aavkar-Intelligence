@@ -33,7 +33,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${playfair.variable} ${inter.variable} antialiased bg-midnight text-white`}
+        className={`${playfair.variable} ${inter.variable} antialiased text-white`}
       >
         <BackgroundWrapper />
         <Navbar />

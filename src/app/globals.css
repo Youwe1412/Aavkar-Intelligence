@@ -23,7 +23,7 @@
 }
 
 body {
-  background-color: var(--color-midnight);
+  background-color: transparent;
   color: #ffffff;
   font-family: var(--font-sans);
   cursor: none;
